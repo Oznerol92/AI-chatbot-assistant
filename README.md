@@ -95,7 +95,7 @@ This will install both frontend and backend dependencies using workspaces or cus
 
 ### 🔑 Step 5: Set Up Your API Key
 
-Create a `.env` file inside the `server` directory:
+Rename `.env_sample` to `.env` and replace api key
 
 ```
 OPENAI_API_KEY=your_openai_key_here
@@ -115,5 +115,7 @@ npm start
 
 This will:
 
-* Run the backend server on `http://localhost:3000`
-* Start the Vite frontend on `http://localhost:5173`
+- Run the backend server on `http://localhost:3000`
+- Start the Vite frontend on `http://localhost:5173`
+
+> Copy and paste `http://localhost:5173` in your browser to see the app
