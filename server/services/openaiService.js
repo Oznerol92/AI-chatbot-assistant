@@ -1,25 +1,50 @@
 const OpenAI = require("openai");
-const client = new OpenAI();
+require("dotenv").config();
 
-require('dotenv').config();
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+const client = new OpenAI({
+	apiKey: process.env.OPENAI_API_KEY,
 });
 
-async function getChatResponse(message) {
-  const response = await client.responses.create({
-    model: "gpt-4.1",
-    input: "Write a one-sentence bedtime story about a unicorn.",
-});
+// Store chats in memory (key = chatId, value = message history)
+const chats = {};
 
-console.log(response);
-console.log(response.output_text);
-
-  
-
-  return response.choices[0].message.content;
+// Get or create a chat's history
+function getChatHistory(chatId) {
+	if (!chats[chatId]) {
+		chats[chatId] = [];
+	}
+	return chats[chatId];
 }
 
-module.exports = { getChatResponse };
+// Add a message to a chat
+function addMessageToChat(chatId, role, content) {
+	const history = getChatHistory(chatId);
+	history.push({ role, content });
+}
 
+// Get a ChatGPT-like response for a specific chat
+async function getChatResponse(chatId, message) {
+	// Add the user's message to history
+	addMessageToChat(chatId, "user", message);
+
+	// Send the full conversation for that chat
+	const response = await client.chat.completions.create({
+		model: "gpt-4o-mini", // Change to "gpt-5" if needed
+		messages: getChatHistory(chatId),
+	});
+
+	// Extract assistant's reply
+	const assistantMessage = response.choices[0].message.content;
+
+	// Add assistant's reply to history
+	addMessageToChat(chatId, "assistant", assistantMessage);
+
+	return assistantMessage;
+}
+
+// Reset a specific chat's conversation
+function resetChat(chatId) {
+	delete chats[chatId];
+}
+
+module.exports = { getChatResponse, resetChat };
