@@ -8,6 +8,7 @@ var cors = require("cors");
 require("dotenv").config();
 
 var apiRouter = require("./routes/api");
+var authRouter = require("./routes/authRoutes");
 const errorHandler = require("./middleware/errorHandler");
 const connectDB = require("./config/db");
 const logger = require("./services/logger");
@@ -25,7 +26,8 @@ app.use((req, res, next) => {
 
 app.use(
 	cors({
-		origin: "http://localhost:5173", // or use "*" during development
+		origin: "http://localhost:5173",
+		credentials: true, // Allow cookies
 	})
 );
 
@@ -47,6 +49,7 @@ if (
 
 // API routes
 app.use("/api/", apiRouter);
+app.use("/api/auth", authRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

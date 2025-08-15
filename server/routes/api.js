@@ -1,11 +1,12 @@
-// server/routes/api.js
 const express = require("express");
 const { body } = require("express-validator");
 const router = express.Router();
+
 const validateRequest = require("../middleware/validateRequest");
 const chatController = require("../controllers/chatController");
 const authMiddleware = require("../middleware/authMiddleware");
 
+// Chat route
 router.post(
 	"/chat",
 	validateRequest([

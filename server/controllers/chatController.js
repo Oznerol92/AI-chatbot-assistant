@@ -4,6 +4,8 @@ const logger = require("../services/logger");
 exports.getChatResponse = async (req, res, next) => {
 	try {
 		const { message, chatId } = req.body;
+		console.log("getChatResponse");
+
 		const userId = req.user.id; // Assuming auth middleware adds `req.user`
 
 		logger.info(
