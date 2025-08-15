@@ -2,6 +2,12 @@
 
 Build a full-stack AI chatbot powered by OpenAI, using **React**, **Vite**, **Tailwind**, **TypeScript**, and an **Express backend**.
 
+## 📄 Project Documentation
+
+- [📍 Roadmap](./roadmap.md) – Strategy & feature phases for the platform
+- [🛠️ TODO](./todo.md) – Active development tasks and next coding steps
+- [⚙️ Tech Stack](./tech-stack.md) – Infrastructure & scaling plan (hosting, DB, backups, cloud)
+
 ---
 
 ## ✅ Part 1: Set Up Your Development Environment
