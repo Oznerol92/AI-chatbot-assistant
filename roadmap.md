@@ -116,6 +116,23 @@ Workflow:
 - Observability & analytics dashboard
 - Mobile offline-first client
 
+### **New Goal: Local AI Deployment**
+
+Objective:
+
+- Run a **fully local AI model** with ChatGPT-level capabilities
+- Allow the assistant to process and store **all code, documents, and proprietary data** for individuals or businesses **without any external API calls**
+- Maintain privacy and control by hosting the AI stack **on local hardware or private cloud**
+- Support:
+  - Codebase understanding & search
+  - Document Q&A across all company data
+  - Multi-modal capabilities (text, images, possible audio)
+- Tech considerations:
+  - Models: LLaMA 3, Mistral, or other open-source LLMs fine-tuned for tasks
+  - Hardware: GPU servers (local or on-prem cluster)
+  - Storage: encrypted local DB & file store
+  - Optional hybrid mode: fallback to cloud AI when local model confidence is low
+
 ---
 
 ## Notes
