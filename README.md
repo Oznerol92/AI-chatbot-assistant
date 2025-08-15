@@ -21,6 +21,7 @@ Please ensure the following tools are installed on your system. Use the links or
 | Node.js LTS |                  | [Node.js LTS](https://nodejs.org/en) or use `nvm`                          |
 | Git         |                  | `sudo apt install git` or from [git-scm.com](https://git-scm.com/download) |
 | VSCode      |                  | [Download VSCode](https://code.visualstudio.com/)                          |
+| MongoDB     |                  | [MongoDB](https://www.mongodb.com/try/download/community)                  |
 
 To verify installation, run:
 

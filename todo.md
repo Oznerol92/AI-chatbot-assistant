@@ -2,19 +2,12 @@
 
 ## 1. Backend Setup (Express)
 
-- [ ] Create `controllers/` for separating request logic from routes
-- [ ] Create `middleware/` for:
-  - [ ] Error handling
-  - [ ] Request validation
-  - [ ] Auth (JWT)
 - [ ] Connect MongoDB/PostgreSQL (see tech-stack.md)
 - [ ] Add `models/` for:
   - [ ] User
   - [ ] AssistantConfig
   - [ ] ChatHistory
   - [ ] Reminder/Event
-- [ ] Update `server/routes/api.js` to import controllers instead of direct service calls
-- [ ] Add `.env` for secrets (OpenAI key, DB URI, JWT secret)
 - [ ] Implement logging (Winston or pino)
 
 ## 2. OpenAI Service Integration
