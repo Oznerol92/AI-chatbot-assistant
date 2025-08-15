@@ -1,111 +1,71 @@
-## 1. Add a Database Layer
+# TODO – AI Assistant SaaS Platform (MERN + Scalable Setup)
 
-You’ll need this for:
+## 1. Backend Setup (Express)
 
-- User accounts & auth (to separate data for each person or bot instance)
-- Assistant configurations (prompt templates, personality, triggers)
-- Chat history & context (long-term memory)
-- Event/reminder storage (for scheduling tasks)
+- [ ] Create `controllers/` for separating request logic from routes
+- [ ] Create `middleware/` for:
+  - [ ] Error handling
+  - [ ] Request validation
+  - [ ] Auth (JWT)
+- [ ] Connect MongoDB/PostgreSQL (see tech-stack.md)
+- [ ] Add `models/` for:
+  - [ ] User
+  - [ ] AssistantConfig
+  - [ ] ChatHistory
+  - [ ] Reminder/Event
+- [ ] Update `server/routes/api.js` to import controllers instead of direct service calls
+- [ ] Add `.env` for secrets (OpenAI key, DB URI, JWT secret)
+- [ ] Implement logging (Winston or pino)
 
-Recommended stack:
+## 2. OpenAI Service Integration
 
-- PostgreSQL — strong, scalable, relational DB
-- Use Prisma ORM (TypeScript-friendly, easy migrations, schema-first dev)
-- If you want quick and flexible storage for chat logs, MongoDB or Redis can complement.
+- [ ] Refactor `openaiService.js` to:
+  - [ ] Support multiple models
+  - [ ] Handle retries & rate limits
+- [ ] Add caching layer (Redis) for recent prompts/responses
 
----
+## 3. Frontend Setup (React + Vite + TS)
 
-## 2. Modular Assistant Architecture
+- [ ] Create `src/components/ChatWindow.tsx`
+- [ ] Create `src/components/AssistantSelector.tsx`
+- [ ] API helper in `src/services/api.ts` for backend calls
+- [ ] State management (Zustand or Redux Toolkit)
+- [ ] Loading/error UI states
 
-Structure your code so each “assistant” is a separate module or plugin:
+## 4. Authentication
 
-- Core service: handles routing, user/session management, message handling
-- Assistant modules:
+- [ ] JWT-based login/signup
+- [ ] Password hashing (bcrypt)
+- [ ] Auth middleware on backend routes
+- [ ] Auth context/provider on frontend
 
-  - Trader Summarizer
-  - Reminder Scheduler
-  - News/Market Watcher
-  - Quick Actions (email, Slack, Telegram commands)
+## 5. Database & Persistence
 
-- Each module defines:
+- [ ] Schema setup in chosen DB
+- [ ] Local dev DB (Docker container)
+- [ ] Cloud DB for staging/production
+- [ ] Automated backups (cloud + local)
 
-  - Triggers (new message, scheduled time, keyword detection, etc.)
-  - Action (summarize, send alert, create task)
-  - Prompt template for AI
+## 6. Hosting & DevOps
 
----
+- [ ] Dockerize frontend & backend
+- [ ] Set up CI/CD pipeline (GitHub Actions)
+- [ ] Deploy:
+  - [ ] Backend → Render/Fly.io/AWS ECS
+  - [ ] Frontend → Vercel/Netlify
+  - [ ] DB → Managed service (Supabase, Neon, MongoDB Atlas)
+- [ ] Environment-based config (dev, staging, prod)
 
-## 3. Event & Message Listening
+## 7. Phase 1 Features
 
-For your trader example:
+- [ ] `/chat` endpoint → AI assistant response
+- [ ] `/summarize` endpoint → summarized text
+- [ ] Telegram integration (webhook listener)
+- [ ] Discord integration (bot listener)
 
-- Integrate with APIs/webhooks from:
+## 8. QA & Scaling Prep
 
-  - Telegram Bot API
-  - Discord Bot API
-  - Email (IMAP listener or Gmail API)
-
-- Build a listener service that:
-
-  - Receives raw messages
-  - Feeds to AI for summarization
-  - Returns proposed reply buttons or text
-  - Logs in DB
-
----
-
-## 4. Scheduling & Reminders
-
-For reminders:
-
-- Use BullMQ (Redis-backed job queue) or Agenda for cron-like scheduling
-- Store reminders in DB with:
-
-  - Date/time
-  - Recurrence rules
-  - Assigned assistant
-  - Delivery channel
-
-- When due → send via the right integration (Telegram, email, app notification)
-
----
-
-## 5. Persistent Memory & Context
-
-- Store conversation summaries instead of raw chat logs to reduce token usage
-- Implement vector search (e.g., using Pinecone, Weaviate, or Postgres pgvector) for semantic recall
-- Allow assistants to pull from past context automatically
-
----
-
-## 6. Multi-Platform Deployment
-
-- Telegram Bot: each assistant can be a separate bot or command
-- Discord Bot: channels for each assistant
-- Web App: same chat frontend, but selectable assistants in a sidebar
-- Email Gateway: for “offline” assistant interaction
-
----
-
-## 7. Business Considerations
-
-To make it a SaaS platform:
-
-- Add subscription tiers (free limited usage, paid higher limits + custom assistants)
-- Usage tracking per user (stored in DB)
-- Stripe for payments
-- Admin dashboard to manage assistants, users, logs
-
----
-
-### Example Flow for “Trader Summarizer”
-
-1. Telegram webhook → listener service
-2. Message detected → stored in DB
-3. Summarization prompt to OpenAI → result saved
-4. Push notification to trader with:
-
-   - Summary
-   - Suggested quick replies (buttons)
-
-5. Trader clicks → sends message via bot
+- [ ] Unit tests (Jest)
+- [ ] Integration tests for routes
+- [ ] Load testing (k6 or Artillery)
+- [ ] Monitor metrics (Prometheus + Grafana)
