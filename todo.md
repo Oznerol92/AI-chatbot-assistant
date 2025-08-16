@@ -19,6 +19,47 @@
 
 ## 3. Frontend Setup (React + Vite + TS)
 
+```
+src/
+├── components/       # UI components (reusable & feature-specific)
+│   ├── auth/
+│   │   ├── LoginForm.tsx
+│   │   ├── RegisterForm.tsx
+│   │   └── AuthSwitcher.tsx
+│   ├── chat/
+│   │   ├── ChatWindow.tsx
+│   │   ├── MessageBubble.tsx
+│   │   └── MessageInput.tsx
+│   └── layout/
+│       └── Navbar.tsx
+│
+├── pages/            # Top-level views
+│   ├── AuthPage.tsx
+│   └── ChatPage.tsx
+│
+├── services/         # API and business logic
+│   ├── api.ts        # generic fetch wrapper
+│   ├── authService.ts
+│   └── chatService.ts
+│
+├── context/          # Global state (AuthContext, ChatContext)
+│   ├── AuthContext.tsx
+│   └── ChatContext.tsx
+│
+├── hooks/            # Custom React hooks
+│   ├── useAuth.ts
+│   └── useChat.ts
+│
+├── types/            # Shared TypeScript types/interfaces
+│   ├── auth.ts
+│   ├── chat.ts
+│   └── index.ts
+│
+├── App.tsx           # routes + context providers
+├── main.tsx
+└── index.css
+```
+
 - [ ] Create `src/components/ChatWindow.tsx`
 - [ ] Create `src/components/AssistantSelector.tsx`
 - [ ] API helper in `src/services/api.ts` for backend calls

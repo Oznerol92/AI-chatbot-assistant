@@ -6,7 +6,7 @@ const validateRequest = require("../middleware/validateRequest");
 const chatController = require("../controllers/chatController");
 const authMiddleware = require("../middleware/authMiddleware");
 
-// Chat route
+// Chat route - send a message
 router.post(
 	"/chat",
 	validateRequest([
@@ -15,6 +15,9 @@ router.post(
 	authMiddleware,
 	chatController.getChatResponse
 );
+
+// Chat history route - get full chat history
+router.get("/chat/history", authMiddleware, chatController.getChatHistory);
 
 module.exports = router;
 
