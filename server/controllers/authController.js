@@ -91,8 +91,6 @@ exports.getMe = async (req, res, next) => {
 			createdAt: 1,
 		});
 
-		console.log(chatHistory);
-
 		res.json({
 			id: req.user._id,
 			name: req.user.name,
