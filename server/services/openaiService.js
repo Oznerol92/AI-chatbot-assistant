@@ -7,42 +7,41 @@ const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 async function getChatResponse(userId, chatId, message, model = "gpt-4o-mini") {
 	try {
-		// Save user message in DB
-		const userMsg = await ChatHistory.create({
+		// Save user message
+		await ChatHistory.create({
 			userId,
 			chatId,
 			role: "user",
 			content: message,
 		});
-		logger.info(`Saved user message: ${JSON.stringify(userMsg)}`);
 
-		// Get chat history from DB
-		const historyDocs = await ChatHistory.find({ chatId }).sort({
+		// Get history in correct format
+		const historyDocs = await ChatHistory.find({ userId, chatId }).sort({
 			createdAt: 1,
 		});
-		const history = historyDocs.map((doc) => ({
+
+		const messages = historyDocs.map((doc) => ({
 			role: doc.role,
 			content: doc.content,
 		}));
 
-		logger.info(`Chat history for ${chatId}: ${JSON.stringify(history)}`);
+		logger.info(`Sending messages to OpenAI: ${JSON.stringify(messages)}`);
 
-		// Send to OpenAI
+		// Call OpenAI
 		const response = await client.chat.completions.create({
 			model,
-			messages: history,
+			messages,
 		});
 
 		const assistantMessage = response.choices[0].message.content;
 
 		// Save assistant message
-		const assistantMsg = await ChatHistory.create({
+		await ChatHistory.create({
 			userId,
 			chatId,
 			role: "assistant",
 			content: assistantMessage,
 		});
-		logger.info(`Saved assistant message: ${JSON.stringify(assistantMsg)}`);
 
 		return assistantMessage;
 	} catch (err) {
