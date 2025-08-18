@@ -4,6 +4,7 @@ import type { User } from "../types/auth";
 
 type AuthContextType = {
 	user: User | null;
+	loading: boolean;
 	login: (email: string, password: string) => Promise<void>;
 	register: (
 		name: string,
@@ -20,12 +21,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 	children,
 }) => {
 	const [user, setUser] = useState<User | null>(null);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		authService
 			.me()
 			.then((data) => setUser(data.user))
-			.catch(() => setUser(null));
+			.catch(() => setUser(null))
+			.finally(() => setLoading(false));
 	}, []);
 
 	const login = async (email: string, password: string) => {
@@ -49,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 	};
 
 	return (
-		<AuthContext.Provider value={{ user, login, register, logout }}>
+		<AuthContext.Provider value={{ user, loading, login, register, logout }}>
 			{children}
 		</AuthContext.Provider>
 	);

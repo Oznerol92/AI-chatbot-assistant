@@ -9,9 +9,22 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import AuthPage from "./pages/AuthPage";
 import ChatPage from "./pages/ChatPage";
 
+// PrivateRoute ensures only logged-in users can access
 function PrivateRoute({ children }: { children: JSX.Element }) {
-	const { user } = useAuth();
+	const { user, loading } = useAuth();
+
+	if (loading) return <div>Loading...</div>;
+
 	return user ? children : <Navigate to="/auth" />;
+}
+
+// PublicRoute redirects logged-in users away from auth pages
+function PublicRoute({ children }: { children: JSX.Element }) {
+	const { user, loading } = useAuth();
+
+	if (loading) return <div>Loading...</div>;
+
+	return user ? <Navigate to="/chat" /> : children;
 }
 
 function App() {
@@ -19,7 +32,14 @@ function App() {
 		<AuthProvider>
 			<Router>
 				<Routes>
-					<Route path="/auth" element={<AuthPage />} />
+					<Route
+						path="/auth"
+						element={
+							<PublicRoute>
+								<AuthPage />
+							</PublicRoute>
+						}
+					/>
 					<Route
 						path="/chat"
 						element={

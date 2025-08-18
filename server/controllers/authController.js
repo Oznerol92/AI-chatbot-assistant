@@ -86,21 +86,30 @@ exports.getMe = async (req, res, next) => {
 	try {
 		const userId = req.user._id;
 
+		// Fetch user by userId, excluding password
+		const user = await User.findById(userId).select("-password").lean();
+
 		// Fetch chat history for this user
 		const chatHistory = await ChatHistory.find({ userId }).sort({
 			createdAt: 1,
 		});
 
-		res.json({
-			id: req.user._id,
-			name: req.user.name,
-			email: req.user.email,
-			chatHistory: chatHistory.map((msg) => ({
+		// Group messages by chatId
+		const chats = chatHistory.reduce((acc, msg) => {
+			if (!acc[msg.chatId]) {
+				acc[msg.chatId] = [];
+			}
+			acc[msg.chatId].push({
 				role: msg.role,
 				content: msg.content,
-				chatId: msg.chatId,
-			})),
-		});
+			});
+			return acc;
+		}, {});
+
+		// Attach grouped chats to user
+		user.chatHistory = chats;
+
+		res.json({ user });
 	} catch (err) {
 		next(err);
 	}
