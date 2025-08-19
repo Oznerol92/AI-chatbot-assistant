@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ChatMessage, Chat } from "../types/chat";
 import { chatService } from "../services/chatService";
+import { useErrorHandler } from "./ErrorContext";
 
 type ChatContextType = {
 	chats: Chat[];
@@ -17,6 +18,7 @@ export const ChatProvider: React.FC<{
 	children: React.ReactNode;
 	initialChats?: Chat[];
 }> = ({ children, initialChats = [] }) => {
+	const { addError } = useErrorHandler();
 	const [chats, setChats] = useState<Chat[]>(initialChats);
 	const [currentChatId, setCurrentChatId] = useState<string | null>(
 		initialChats[0]?._id || null
@@ -86,8 +88,9 @@ export const ChatProvider: React.FC<{
 					)
 				);
 			}
-		} catch (err) {
+		} catch (err: any) {
 			console.error("Error sending message:", err);
+			addError(err.message || "Failed to send message");
 		}
 	};
 

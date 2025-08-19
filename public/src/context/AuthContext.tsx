@@ -5,6 +5,7 @@ import type { User } from "../types/auth";
 type AuthContextType = {
 	user: User | null;
 	loading: boolean;
+	chatHistory: [];
 	login: (email: string, password: string) => Promise<void>;
 	register: (
 		name: string,

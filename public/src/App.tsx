@@ -8,6 +8,9 @@ import {
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import AuthPage from "./pages/AuthPage";
 import ChatPage from "./pages/ChatPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import { ErrorProvider } from "./context/ErrorContext";
+import { ChatProvider } from "./context/ChatContext";
 
 // PrivateRoute ensures only logged-in users can access
 function PrivateRoute({ children }: { children: JSX.Element }) {
@@ -30,29 +33,42 @@ function PublicRoute({ children }: { children: JSX.Element }) {
 
 function App() {
 	return (
-		<AuthProvider>
-			<Router>
-				<Routes>
-					<Route
-						path="/auth"
-						element={
-							<PublicRoute>
-								<AuthPage />
-							</PublicRoute>
-						}
-					/>
-					<Route
-						path="/chat"
-						element={
-							<PrivateRoute>
-								<ChatPage />
-							</PrivateRoute>
-						}
-					/>
-					<Route path="*" element={<Navigate to="/chat" />} />
-				</Routes>
-			</Router>
-		</AuthProvider>
+		<ErrorProvider>
+			<AuthProvider>
+				<ChatProvider>
+					<Router>
+						<Routes>
+							<Route
+								path="/"
+								element={
+									<PublicRoute>
+										<AuthPage />
+									</PublicRoute>
+								}
+							/>
+							<Route
+								path="/auth"
+								element={
+									<PublicRoute>
+										<AuthPage />
+									</PublicRoute>
+								}
+							/>
+							<Route
+								path="/chat"
+								element={
+									<PrivateRoute>
+										<ChatPage />
+									</PrivateRoute>
+								}
+							/>
+							{/* <Route path="*" element={<Navigate to="/chat" />} /> */}
+							<Route path="*" element={<NotFoundPage />} />
+						</Routes>
+					</Router>
+				</ChatProvider>
+			</AuthProvider>
+		</ErrorProvider>
 	);
 }
 

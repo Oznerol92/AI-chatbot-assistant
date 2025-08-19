@@ -6,7 +6,7 @@ import Navbar from "../components/layout/Navbar";
 import { useState, useMemo } from "react";
 
 function ChatPageContent() {
-	const { user, logout } = useAuth();
+	const { user, loading, logout } = useAuth();
 	const { chats, currentChatId, messages, sendMessage, selectChat } = useChat();
 
 	const [input, setInput] = useState("");
@@ -73,10 +73,11 @@ function ChatPageContent() {
 						placeholder="Type your message..."
 					/>
 					<button
+						disabled={loading}
 						className="px-4 py-2 bg-blue-500 text-white rounded"
 						onClick={handleSend}
 					>
-						Send
+						{loading ? "Sending..." : "Send"}
 					</button>
 				</div>
 			</div>
