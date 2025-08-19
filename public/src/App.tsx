@@ -12,6 +12,7 @@ import ChatPage from "./pages/ChatPage";
 // PrivateRoute ensures only logged-in users can access
 function PrivateRoute({ children }: { children: JSX.Element }) {
 	const { user, loading } = useAuth();
+	console.log(user);
 
 	if (loading) return <div>Loading...</div>;
 
