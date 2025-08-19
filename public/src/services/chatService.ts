@@ -8,9 +8,9 @@ export const chatService = {
 		api<{ chatHistory: Message[] }>("/chat/history").then((res) => res),
 
 	// Send a message and get the AI reply
-	sendMessage: (content: string) =>
-		api<{ reply: string }>("/chat", {
+	sendMessage: (content: string, chatId?: string) =>
+		api<{ chatId: string; reply: string }>("/chat", {
 			method: "POST",
-			body: JSON.stringify({ message: content }),
+			body: JSON.stringify({ message: content, chatId }),
 		}).then((res) => res),
 };

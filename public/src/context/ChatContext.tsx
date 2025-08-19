@@ -1,50 +1,106 @@
 // src/context/ChatContext.tsx
 import { createContext, useContext, useState, useEffect } from "react";
+import type { ChatMessage, Chat } from "../types/chat";
 import { chatService } from "../services/chatService";
-import type { Message } from "../components/chat/ChatWindow";
-import { useAuth } from "./AuthContext";
 
 type ChatContextType = {
-	messages: Message[];
+	chats: Chat[];
+	currentChatId: string | null;
+	messages: ChatMessage[];
 	sendMessage: (content: string) => Promise<void>;
+	selectChat: (chatId: string) => void;
 };
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
-export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
-	children,
-}) => {
-	const { user } = useAuth();
-	const [messages, setMessages] = useState<Message[]>([]);
+export const ChatProvider: React.FC<{
+	children: React.ReactNode;
+	initialChats?: Chat[];
+}> = ({ children, initialChats = [] }) => {
+	const [chats, setChats] = useState<Chat[]>(initialChats);
+	const [currentChatId, setCurrentChatId] = useState<string | null>(
+		initialChats[0]?._id || null
+	);
 
-	// Load chat history on mount
-	useEffect(() => {
-		if (!user) return;
-		chatService
-			.getHistory()
-			.then((data) => setMessages(data.chatHistory || []))
-			.catch(() => setMessages([]));
-	}, [user]);
+	const currentMessages =
+		chats.find((c) => c._id === currentChatId)?.messages || [];
+
+	const selectChat = (chatId: string) => setCurrentChatId(chatId);
 
 	const sendMessage = async (content: string) => {
-		if (!user) return;
+		console.log(currentChatId);
 
-		// Add user message locally
-		const userMessage: Message = { role: "user", content };
-		setMessages((prev) => [...prev, userMessage]);
+		if (!currentChatId) {
+			// If no chat selected, create a new one locally first
+			const tempId = `temp-${Date.now()}`;
+			setChats((prev) => [
+				...prev,
+				{ _id: tempId, title: "New Chat", messages: [] },
+			]);
+			selectChat(tempId);
+		}
 
-		// Send to backend
+		const chatIdToSend = currentChatId || `temp-${Date.now()}`;
+
+		// Append user message locally for instant UI feedback
+		const newMsg: ChatMessage = {
+			role: "user",
+			content,
+			chatId: chatIdToSend,
+		};
+		setChats((prev) =>
+			prev.map((c) =>
+				c._id === chatIdToSend ? { ...c, messages: [...c.messages, newMsg] } : c
+			)
+		);
+
 		try {
-			const res = await chatService.sendMessage(content);
-			const aiMessage: Message = { role: "assistant", content: res.reply };
-			setMessages((prev) => [...prev, aiMessage]);
+			// Call backend
+			const res = await chatService.sendMessage(
+				content,
+				chatIdToSend.startsWith("temp-") ? undefined : chatIdToSend
+			);
+
+			const replyMsg: ChatMessage = {
+				role: "assistant",
+				content: res.reply,
+				chatId: res.chatId,
+			};
+			// Update chatId if it was a temporary chat
+			if (chatIdToSend.startsWith("temp-")) {
+				setChats((prev) =>
+					prev.map((c) =>
+						c._id === chatIdToSend
+							? { ...c, _id: res.chatId, messages: [...c.messages, replyMsg] }
+							: c
+					)
+				);
+				selectChat(res.chatId);
+			} else {
+				// Append AI reply normally
+				setChats((prev) =>
+					prev.map((c) =>
+						c._id === res.chatId
+							? { ...c, messages: [...c.messages, replyMsg] }
+							: c
+					)
+				);
+			}
 		} catch (err) {
-			console.error("Failed to send message", err);
+			console.error("Error sending message:", err);
 		}
 	};
 
 	return (
-		<ChatContext.Provider value={{ messages, sendMessage }}>
+		<ChatContext.Provider
+			value={{
+				chats,
+				currentChatId,
+				messages: currentMessages,
+				sendMessage,
+				selectChat,
+			}}
+		>
 			{children}
 		</ChatContext.Provider>
 	);
